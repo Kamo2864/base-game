@@ -1,8 +1,4 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const questions = {
   easy: [
@@ -84,7 +80,7 @@ const QuizGame = () => {
       } else {
         setShowResult(true);
       }
-    }, 1000); // Delay for 1 second to show feedback
+    }, 1000);
   };
 
   const restartQuiz = () => {
@@ -96,7 +92,8 @@ const QuizGame = () => {
     setCurrentQuestions(questions[difficulty]);
   };
 
-  const handleDifficultyChange = (value) => {
+  const handleDifficultyChange = (event) => {
+    const value = event.target.value;
     setDifficulty(value);
     setCurrentQuestions(questions[value]);
     restartQuiz();
@@ -104,60 +101,56 @@ const QuizGame = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-      <Card className="w-full max-w-lg mx-auto shadow-2xl bg-white/90 backdrop-blur-sm">
-        <CardHeader className="text-3xl font-bold text-center text-purple-700">
-          Be Based!
-        </CardHeader>
-        <CardContent className="p-6">
-          <Select onValueChange={handleDifficultyChange} value={difficulty}>
-            <SelectTrigger className="w-full mb-4">
-              <SelectValue placeholder="Select Difficulty" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="easy">Difficulty: Easy</SelectItem>
-              <SelectItem value="medium">Difficulty: Medium</SelectItem>
-              <SelectItem value="hard">Difficulty: Hard</SelectItem>
-            </SelectContent>
-          </Select>
-          {showResult ? (
-            <div className="text-center">
-              <h2 className="text-2xl mb-4 font-semibold">Quiz Completed!</h2>
-              <p className="text-xl mb-4">Your score: {score} out of {currentQuestions.length}</p>
-              <Progress value={(score / currentQuestions.length) * 100} className="mb-4" />
+      <div className="w-full max-w-lg mx-auto shadow-2xl bg-white/90 backdrop-blur-sm p-6 rounded-lg">
+        <h1 className="text-3xl font-bold text-center text-purple-700 mb-6">Be Based!</h1>
+        <select
+          onChange={handleDifficultyChange}
+          value={difficulty}
+          className="w-full mb-4 p-2 border rounded"
+        >
+          <option value="easy">Difficulty: Easy</option>
+          <option value="medium">Difficulty: Medium</option>
+          <option value="hard">Difficulty: Hard</option>
+        </select>
+        {showResult ? (
+          <div className="text-center">
+            <h2 className="text-2xl mb-4 font-semibold">Quiz Completed!</h2>
+            <p className="text-xl mb-4">Your score: {score} out of {currentQuestions.length}</p>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+              <div className="bg-blue-600 h-2.5 rounded-full" style={{width: `${(score / currentQuestions.length) * 100}%`}}></div>
             </div>
-          ) : (
-            <div>
-              <h2 className="text-2xl mb-6 font-semibold text-center">{currentQuestions[currentQuestion].question}</h2>
-              <div className="space-y-3">
-                {currentQuestions[currentQuestion].options.map((option, index) => (
-                  <Button
-                    key={index}
-                    className={`w-full text-left py-3 px-4 font-medium rounded-lg transition duration-200 ${
-                      selectedAnswer === index
-                        ? isCorrect
-                          ? 'bg-green-500 text-white'
-                          : 'bg-red-500 text-white'
-                        : 'bg-white hover:bg-gray-100 text-purple-700'
-                    }`}
-                    onClick={() => handleAnswer(index)}
-                    disabled={selectedAnswer !== null}
-                  >
-                    {option}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="justify-between items-center">
-          {showResult && (
-            <Button onClick={restartQuiz} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+            <button
+              onClick={restartQuiz}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+            >
               Restart Quiz
-            </Button>
-          )}
-          <div className="text-sm text-gray-600">Built Onchain, on Base</div>
-        </CardFooter>
-      </Card>
+            </button>
+          </div>
+        ) : (
+          <div>
+            <h2 className="text-2xl mb-6 font-semibold text-center">{currentQuestions[currentQuestion].question}</h2>
+            <div className="space-y-3">
+              {currentQuestions[currentQuestion].options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`w-full text-left py-3 px-4 font-medium rounded-lg transition duration-200 ${
+                    selectedAnswer === index
+                      ? isCorrect
+                        ? 'bg-green-500 text-white'
+                        : 'bg-red-500 text-white'
+                      : 'bg-white hover:bg-gray-100 text-purple-700'
+                  }`}
+                  onClick={() => handleAnswer(index)}
+                  disabled={selectedAnswer !== null}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="mt-6 text-sm text-gray-600 text-center">Built Onchain, on Base</div>
+      </div>
     </div>
   );
 };
